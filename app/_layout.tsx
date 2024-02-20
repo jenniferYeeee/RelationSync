@@ -1,12 +1,12 @@
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
+import { DarkTheme, DefaultTheme, ThemeProvider, useRoute } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
-
+import { Touchable, TouchableOpacity } from 'react-native';
 //import { useColorScheme } from '@/components/useColorScheme';
-
+//const API_KEY;
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -47,11 +47,27 @@ export default function RootLayout() {
 }
 
 function RootLayoutNav() {
+  const router = useRouter();
 
   return (
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
+        <Stack.Screen 
+        name="(modals)/login" 
+        options={{ 
+          title: 'Log in or sign up',
+          headerTitleStyle:{
+            fontFamily: 'imb',
+          },
+          presentation: 'modal',
+          headerLeft: () => (
+            <TouchableOpacity onPress = {()=>router.back()} >
+              <Ionicons name="close-outline" size={24} color="black"/>
+            </TouchableOpacity>
+          ),
+          }} 
+        />
+        <Stack.Screen name="map/[id]" options={{headerTitle:''}}/>
       </Stack>
   );
 }
