@@ -5,8 +5,28 @@ import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import { Touchable, TouchableOpacity } from 'react-native';
+import { Auth } from '@/components/Auth.native';
+import * as SecureStore from 'expo-secure-store'; // Import the SecureStore module
+
 //import { useColorScheme } from '@/components/useColorScheme';
 //const API_KEY;
+const tokenCache = {
+  async getToken(key:string){
+    try{
+      return SecureStore.getItemAsync(key); // Use the SecureStore module
+    } catch(err){
+      return null;
+    }
+  },
+  async saveToken(key:string, value:string){
+    try{
+      return SecureStore.setItemAsync(key, value); // Use the SecureStore module
+    } catch(err){
+      return;
+    }
+  },
+}
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
