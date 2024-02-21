@@ -1,15 +1,15 @@
 import { Ionicons } from '@expo/vector-icons';
-import { DarkTheme, DefaultTheme, ThemeProvider, useRoute } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
 import { Stack, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Touchable, TouchableOpacity } from 'react-native';
-import { Auth } from '@/components/Auth.native';
 import * as SecureStore from 'expo-secure-store'; // Import the SecureStore module
-
+import { ClerkProvider,useSignIn,useSession, useAuth } from '@clerk/clerk-expo';
 //import { useColorScheme } from '@/components/useColorScheme';
 //const API_KEY;
+const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
 const tokenCache = {
   async getToken(key:string){
     try{
@@ -25,7 +25,8 @@ const tokenCache = {
       return;
     }
   },
-}
+};
+
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -63,12 +64,22 @@ export default function RootLayout() {
     return null;
   }
 
-  return <RootLayoutNav />;
+  return (
+  <ClerkProvider publishableKey={CLERK_PUBLISHABLE_KEY!} tokenCache={tokenCache}>
+    <RootLayoutNav />
+  </ClerkProvider>
+  );
+  
 }
 
 function RootLayoutNav() {
   const router = useRouter();
-
+  const {isLoaded, isSignedIn}=useAuth();
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.push('/(modals)/login');
+    }
+  }, [isLoaded]);
   return (
       <Stack>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
@@ -91,3 +102,4 @@ function RootLayoutNav() {
       </Stack>
   );
 }
+
